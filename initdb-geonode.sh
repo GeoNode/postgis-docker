@@ -20,6 +20,13 @@ function create_geonode_user_and_geodatabase() {
 		ALTER USER $geodb with encrypted password '$GEONODE_GEODATABASE_PASSWORD';
 	    CREATE DATABASE $geodb;
 	    GRANT ALL PRIVILEGES ON DATABASE $geodb TO $geodb;
+EOSQL
+}
+
+function update_geodatabase_with_postgis() {
+	local geonode_data=$1
+	echo "  Updating geodatabase '$geonode_data' with extension"
+	psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$geonode_data" <<-EOSQL
 		CREATE EXTENSION postgis;
 EOSQL
 }
@@ -33,5 +40,6 @@ fi
 if [ -n "$GEONODE_GEODATABASE" ]; then
 	echo "Geonode geodatabase creation requested: $GEONODE_GEODATABASE"
 	create_geonode_user_and_geodatabase $GEONODE_GEODATABASE
+	update_geodatabase_with_postgis $GEONODE_GEODATABASE
 	echo "Geonode geodatabase created"
 fi
