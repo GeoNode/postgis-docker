@@ -7,7 +7,6 @@ function create_geonode_user_and_database() {
 	psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
 		CREATE USER $db;
 		ALTER USER $db with encrypted password '$GEONODE_DATABASE_PASSWORD';
-		ALTER ROLE $db SUPERUSER;
 		CREATE DATABASE $db;
 		GRANT ALL PRIVILEGES ON DATABASE $db TO $db;
 EOSQL
@@ -17,11 +16,10 @@ function create_geonode_user_and_geodatabase() {
 	local geodb=$1
 	echo "  Creating user and database '$geodb'"
 	psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
-	    CREATE USER $geodb;
-	    ALTER USER $geodb with encrypted password '$GEONODE_GEODATABASE_PASSWORD';
-	    ALTER ROLE $geodb SUPERUSER;
-	    CREATE DATABASE $geodb;
-	    GRANT ALL PRIVILEGES ON DATABASE $geodb TO $geodb;
+		CREATE USER $geodb;
+		ALTER USER $geodb with encrypted password '$GEONODE_GEODATABASE_PASSWORD';
+		CREATE DATABASE $geodb;
+		GRANT ALL PRIVILEGES ON DATABASE $geodb TO $geodb;
 EOSQL
 }
 
@@ -29,9 +27,9 @@ function update_database_with_postgis() {
     local db=$1
     echo "  Updating databse '$db' with extension"
     psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$db" <<-EOSQL
-        CREATE EXTENSION IF NOT EXISTS postgis;
-        GRANT ALL ON geometry_columns TO PUBLIC;
-        GRANT ALL ON spatial_ref_sys TO PUBLIC;
+		CREATE EXTENSION IF NOT EXISTS postgis;
+		GRANT ALL ON geometry_columns TO PUBLIC;
+		GRANT ALL ON spatial_ref_sys TO PUBLIC;
 EOSQL
 }
 
