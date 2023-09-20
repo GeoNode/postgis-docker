@@ -7,7 +7,7 @@ function create_geonode_user_and_database() {
 	local geonode_password="$GEONODE_DATABASE_PASSWORD"
 	echo "  Creating user and database '$db' with Geonode user: $geonode_user"
 	psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
-		CREATE USER $db;
+		CREATE USER $geonode_user;
 		ALTER USER $geonode_user with encrypted password '$geonode_password';
 		ALTER USER $geonode_user CREATEDB;
 		CREATE DATABASE $db;
@@ -28,7 +28,7 @@ function create_geonode_user_and_geodatabase() {
 
 	echo "  Creating user and database '$geodb' with Geonode GeoDB user: $geonode_geodb_user"
 	psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
-		CREATE USER $geodb;
+		CREATE USER $geonode_geodb_user;
 		ALTER USER $geonode_geodb_user with encrypted password '$geonode_geodb_password';
 		ALTER USER $geonode_geodb_user CREATEDB;
 		CREATE DATABASE $geodb;
